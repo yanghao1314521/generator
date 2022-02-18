@@ -1,5 +1,5 @@
 /*
- *    Copyright 2006-2020 the original author or authors.
+ *    Copyright 2006-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.mybatis.generator.plugins;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.mybatis.generator.api.IntrospectedTable;
@@ -22,7 +24,16 @@ import org.mybatis.generator.api.IntrospectedTable.TargetRuntime;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 
+/**
+ *
+ *    mapper add               @Mapper Annotation
+ * mapper add   @Repository  Annotation
+ * mapper 's method add    throws SQLException
+ * @author yanghao
+ */
 public class MapperAnnotationPlugin extends PluginAdapter {
 
     @Override
@@ -36,9 +47,34 @@ public class MapperAnnotationPlugin extends PluginAdapter {
         if (introspectedTable.getTargetRuntime() == TargetRuntime.MYBATIS3) {
             // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation
             interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper")); //$NON-NLS-1$
-            interfaze.addAnnotation("@Mapper"); //$NON-NLS-1$
+                    new FullyQualifiedJavaType("org.springframework.stereotype.Repository"));
+            //$NON-NLS-1$
+            interfaze.addAnnotation("@Repository");
+            // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation
+            interfaze.addImportedType(
+                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
+            //$NON-NLS-1$
+            interfaze.addAnnotation("@Mapper");
+            //$NON-NLS-1$
+
+            // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation
+            interfaze.addImportedType(
+                    new FullyQualifiedJavaType("java.sql.SQLException"));
+            List<Method> methods = interfaze.getMethods();
+            for (Method method : methods) {
+                method.addException(new FullyQualifiedJavaType("java.sql.SQLException"));
+            }
         }
+        interfaze.addJavaDocLine("/**");
+        interfaze.addJavaDocLine("* @author yanghao");
+//        + this.date2Str(new Date())
+        interfaze.addJavaDocLine("* Created by Mybatis Generator " );
+        interfaze.addJavaDocLine("*/");
         return true;
+    }
+
+    private String date2Str(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        return sdf.format(date);
     }
 }
