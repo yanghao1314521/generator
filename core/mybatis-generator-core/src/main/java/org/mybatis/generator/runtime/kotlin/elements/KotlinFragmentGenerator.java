@@ -1,11 +1,11 @@
 /*
- *    Copyright 2006-2021 the original author or authors.
+ *    Copyright 2006-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,14 +65,14 @@ public class KotlinFragmentGenerator {
                     .withDataType(kt.getShortNameWithTypeArguments())
                     .build());
             if (first) {
-                builder.withCodeLine("    where(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                        + ", isEqualTo(" + argName //$NON-NLS-1$
-                        + "))"); //$NON-NLS-1$
+                builder.withCodeLine("    where { " + fieldNameAndImport.fieldName() //$NON-NLS-1$
+                        + " isEqualTo " + argName //$NON-NLS-1$
+                        + " }"); //$NON-NLS-1$
                 first = false;
             } else {
-                builder.withCodeLine("    and(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                        + ", isEqualTo(" + argName //$NON-NLS-1$
-                        + "))"); //$NON-NLS-1$
+                builder.withCodeLine("    and { " + fieldNameAndImport.fieldName() //$NON-NLS-1$
+                        + " isEqualTo " + argName //$NON-NLS-1$
+                        + " }"); //$NON-NLS-1$
             }
         }
         builder.withCodeLine("}"); //$NON-NLS-1$
@@ -91,14 +91,14 @@ public class KotlinFragmentGenerator {
 
             builder.withImport(fieldNameAndImport.importString());
             if (first) {
-                builder.withCodeLine("    where(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                        + ", isEqualTo(row." + column.getJavaProperty() //$NON-NLS-1$
-                        + "!!))"); //$NON-NLS-1$
+                builder.withCodeLine("    where { " + fieldNameAndImport.fieldName() //$NON-NLS-1$
+                        + " isEqualTo row." + column.getJavaProperty() //$NON-NLS-1$
+                        + "!! }"); //$NON-NLS-1$
                 first = false;
             } else {
-                builder.withCodeLine("    and(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                        + ", isEqualTo(row." + column.getJavaProperty() //$NON-NLS-1$
-                        + "!!))"); //$NON-NLS-1$
+                builder.withCodeLine("    and {" + fieldNameAndImport.fieldName() //$NON-NLS-1$
+                        + " isEqualTo row." + column.getJavaProperty() //$NON-NLS-1$
+                        + "!! }"); //$NON-NLS-1$
             }
         }
         builder.withCodeLine("}"); //$NON-NLS-1$
@@ -224,8 +224,7 @@ public class KotlinFragmentGenerator {
             builder.withImport(fieldNameAndImport.importString());
 
             builder.withCodeLine("    set(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                    + ").equalToOrNull(row::" + column.getJavaProperty() //$NON-NLS-1$
-                    + ")"); //$NON-NLS-1$
+                    + ") equalToOrNull row::" + column.getJavaProperty()); //$NON-NLS-1$
         }
 
         return builder.build();
@@ -243,8 +242,7 @@ public class KotlinFragmentGenerator {
             builder.withImport(fieldNameAndImport.importString());
 
             builder.withCodeLine("    set(" + fieldNameAndImport.fieldName() //$NON-NLS-1$
-                    + ").equalToWhenPresent(row::" + column.getJavaProperty() //$NON-NLS-1$
-                    + ")"); //$NON-NLS-1$
+                    + ") equalToWhenPresent row::" + column.getJavaProperty()); //$NON-NLS-1$
         }
 
         return builder.build();

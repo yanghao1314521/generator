@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+       Copyright 2006-2022 the original author or authors.
+
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+
+          https://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.mybatis.generator</groupId>
     <artifactId>org.mybatis.generator.eclipse.parent</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
-    <relativePath>../org.mybatis.generator.eclipse.parent</relativePath>
+    <version>1.4.2-SNAPSHOT</version>
   </parent>
   <artifactId>org.mybatis.generator.eclipse.site</artifactId>
   <packaging>eclipse-repository</packaging>
+  <name>MyBatis Generator Update Site</name>
 
   <properties>
     <!-- skip sonar - no code here -->
@@ -25,17 +43,6 @@
         <version>${tycho-version}</version>
         <configuration>
           <finalName>${project.artifactId}-${qualifiedVersion}</finalName>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>workspace</directory>
-            </fileset>
-          </filesets>
         </configuration>
       </plugin>
     </plugins>
@@ -77,9 +84,9 @@
             <configuration>
               <repositories>
                 <repository>
-                  <id>oxygen</id>
+                  <id>Eclipse Latest</id>
                   <layout>p2</layout>
-                  <url>http://download.eclipse.org/releases/oxygen</url>
+                  <url>http://download.eclipse.org/releases/latest</url>
                 </repository>
               </repositories>
               <dependencies>

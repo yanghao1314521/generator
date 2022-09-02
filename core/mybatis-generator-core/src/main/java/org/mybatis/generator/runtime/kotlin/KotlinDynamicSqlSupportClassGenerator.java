@@ -1,11 +1,11 @@
 /*
- *    Copyright 2006-2021 the original author or authors.
+ *    Copyright 2006-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,7 @@ import org.mybatis.generator.api.dom.kotlin.KotlinFile;
 import org.mybatis.generator.api.dom.kotlin.KotlinProperty;
 import org.mybatis.generator.api.dom.kotlin.KotlinType;
 import org.mybatis.generator.config.Context;
+import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.mybatis.generator.internal.util.messages.Messages;
@@ -120,7 +121,7 @@ public class KotlinDynamicSqlSupportClassGenerator {
 
 
     private KotlinType buildInnerClass() {
-        String domainObjectName = introspectedTable.getFullyQualifiedTable().getDomainObjectName();
+        String domainObjectName = introspectedTable.getMyBatisDynamicSQLTableObjectName();
 
         return KotlinType.newClass(domainObjectName)
                 .withSuperType("AliasableSqlTable<" + domainObjectName + ">(\"" //$NON-NLS-1$ //$NON-NLS-2$
@@ -131,9 +132,9 @@ public class KotlinDynamicSqlSupportClassGenerator {
     }
 
     private KotlinProperty calculateTableProperty() {
-        String tableType = introspectedTable.getFullyQualifiedTable().getDomainObjectName();
+        String tableType = introspectedTable.getMyBatisDynamicSQLTableObjectName();
         String fieldName =
-                JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+                JavaBeansUtil.getValidPropertyName(introspectedTable.getMyBatisDynamicSQLTableObjectName());
 
         return KotlinProperty.newVal(fieldName)
                 .withInitializationString(tableType + "()") //$NON-NLS-1$
@@ -181,10 +182,16 @@ public class KotlinDynamicSqlSupportClassGenerator {
 
         if (StringUtility.stringHasValue(column.getTypeHandler())) {
             initializationString.append(
-                    String.format(", typeHandler = \"%s\")", column.getTypeHandler())); //$NON-NLS-1$
-        } else {
-            initializationString.append(')');
+                    String.format(", typeHandler = \"%s\"", column.getTypeHandler())); //$NON-NLS-1$
         }
+
+        if (StringUtility.isTrue(
+                column.getProperties().getProperty(PropertyRegistry.COLUMN_OVERRIDE_FORCE_JAVA_TYPE))) {
+            initializationString.append(
+                    String.format(", javaType = %s::class", kt.getShortNameWithoutTypeArguments())); //$NON-NLS-1$
+        }
+
+        initializationString.append(')'); //$NON-NLS-1$
 
         return initializationString.toString();
     }

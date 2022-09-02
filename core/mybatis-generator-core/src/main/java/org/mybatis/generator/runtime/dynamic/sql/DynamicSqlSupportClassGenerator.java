@@ -1,11 +1,11 @@
 /*
- *    Copyright 2006-2021 the original author or authors.
+ *    Copyright 2006-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import org.mybatis.generator.api.dom.java.InnerClass;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.mybatis.generator.internal.util.messages.Messages;
@@ -72,7 +73,7 @@ public class DynamicSqlSupportClassGenerator {
 
     private InnerClass buildInnerTableClass(TopLevelClass topLevelClass) {
         FullyQualifiedJavaType fqjt =
-                new FullyQualifiedJavaType(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+                new FullyQualifiedJavaType(introspectedTable.getMyBatisDynamicSQLTableObjectName());
         InnerClass innerClass = new InnerClass(fqjt.getShortName());
         innerClass.setVisibility(JavaVisibility.PUBLIC);
         innerClass.setStatic(true);
@@ -96,9 +97,9 @@ public class DynamicSqlSupportClassGenerator {
 
     private Field calculateTableDefinition(TopLevelClass topLevelClass) {
         FullyQualifiedJavaType fqjt =
-                new FullyQualifiedJavaType(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+                new FullyQualifiedJavaType(introspectedTable.getMyBatisDynamicSQLTableObjectName());
         String fieldName =
-                JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+                JavaBeansUtil.getValidPropertyName(introspectedTable.getMyBatisDynamicSQLTableObjectName());
         Field field = new Field(fieldName, fqjt);
         commentGenerator.addFieldAnnotation(field, introspectedTable, topLevelClass.getImportedTypes());
         field.setVisibility(JavaVisibility.PUBLIC);
@@ -106,7 +107,7 @@ public class DynamicSqlSupportClassGenerator {
         field.setFinal(true);
 
         String initializationString = String.format("new %s()", //$NON-NLS-1$
-                escapeStringForJava(introspectedTable.getFullyQualifiedTable().getDomainObjectName()));
+                escapeStringForJava(introspectedTable.getMyBatisDynamicSQLTableObjectName()));
         field.setInitializationString(initializationString);
         return field;
     }
@@ -114,7 +115,15 @@ public class DynamicSqlSupportClassGenerator {
     private void handleColumn(TopLevelClass topLevelClass, InnerClass innerClass,
             IntrospectedColumn column, String tableFieldName) {
         topLevelClass.addImportedType(column.getFullyQualifiedJavaType());
-        FullyQualifiedJavaType fieldType = calculateFieldType(column);
+
+        FullyQualifiedJavaType javaType;
+        if (column.getFullyQualifiedJavaType().isPrimitive()) {
+            javaType = column.getFullyQualifiedJavaType().getPrimitiveTypeWrapper();
+        } else {
+            javaType = column.getFullyQualifiedJavaType();
+        }
+
+        FullyQualifiedJavaType fieldType = calculateFieldType(javaType);
         String fieldName = column.getJavaProperty();
 
         if (fieldName.equals(tableFieldName)) {
@@ -137,21 +146,15 @@ public class DynamicSqlSupportClassGenerator {
         Field field = new Field(fieldName, fieldType);
         field.setVisibility(JavaVisibility.PUBLIC);
         field.setFinal(true);
-        field.setInitializationString(calculateInnerInitializationString(column));
+        field.setInitializationString(calculateInnerInitializationString(column, javaType));
         innerClass.addField(field);
     }
 
-    private FullyQualifiedJavaType calculateFieldType(IntrospectedColumn column) {
-        FullyQualifiedJavaType typeParameter;
-        if (column.getFullyQualifiedJavaType().isPrimitive()) {
-            typeParameter = column.getFullyQualifiedJavaType().getPrimitiveTypeWrapper();
-        } else {
-            typeParameter = column.getFullyQualifiedJavaType();
-        }
-        return new FullyQualifiedJavaType(String.format("SqlColumn<%s>", typeParameter.getShortName())); //$NON-NLS-1$
+    private FullyQualifiedJavaType calculateFieldType(FullyQualifiedJavaType javaType) {
+        return new FullyQualifiedJavaType(String.format("SqlColumn<%s>", javaType.getShortName())); //$NON-NLS-1$
     }
 
-    private String calculateInnerInitializationString(IntrospectedColumn column) {
+    private String calculateInnerInitializationString(IntrospectedColumn column, FullyQualifiedJavaType javaType) {
         StringBuilder initializationString = new StringBuilder();
 
         initializationString.append(String.format("column(\"%s\", JDBCType.%s", //$NON-NLS-1$ //$NON-NLS-2$
@@ -161,7 +164,15 @@ public class DynamicSqlSupportClassGenerator {
         if (StringUtility.stringHasValue(column.getTypeHandler())) {
             initializationString.append(String.format(", \"%s\")", column.getTypeHandler())); //$NON-NLS-1$
         } else {
-            initializationString.append(')');
+            initializationString.append(')'); //$NON-NLS-1$
+        }
+
+
+        if (StringUtility.isTrue(
+                column.getProperties().getProperty(PropertyRegistry.COLUMN_OVERRIDE_FORCE_JAVA_TYPE))) {
+            initializationString.append(".withJavaType("); //$NON-NLS-1$
+            initializationString.append(javaType.getShortName());
+            initializationString.append(".class)"); //$NON-NLS-1$
         }
 
         return initializationString.toString();

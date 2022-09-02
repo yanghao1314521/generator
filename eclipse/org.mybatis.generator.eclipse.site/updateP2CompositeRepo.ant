@@ -1,5 +1,23 @@
 <?xml version="1.0"?>
 <!--
+
+       Copyright 2006-2022 the original author or authors.
+
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+
+          https://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+
+
+-->
+<!--
   This ant file is intended to be called from the pom during the P2 publishing phase.
   It will not function when called independantly.
   This file exists primarily because there is no Tycho support for updating
@@ -17,7 +35,7 @@
   <target name="init">
     <property name="repo.drops.dir" value="${p2.repo.base.directory}/drops"/>
     <property name="repo.zipped.dir" value="${p2.repo.base.directory}/zipped"/>
-    
+
     <!-- Create repository directories if they don't already exist -->
     <mkdir dir="${p2.repo.base.directory}"/>
     <mkdir dir="${repo.drops.dir}"/>
@@ -34,6 +52,15 @@
       <fileset dir="${project.build.directory}/repository"/>
     </copy>
     
+    <!-- turn off composite loading so we don't download all the old versions -->
+    <replaceregexp byline="true">
+      <regexp pattern="property name='p2.atomic.composite.loading' value='true'" />
+      <substitution expression="property name='p2.atomic.composite.loading' value='false'" />
+      <fileset dir="${p2.repo.base.directory}">
+        <include name="*.xml" />
+      </fileset>
+    </replaceregexp>
+
     <!-- update composite repo (this task needs to run in the Eclipse runtime) -->
     <p2.composite.repository>
       <repository compressed="false" location="${p2.repo.base.directory}"/>
@@ -51,11 +78,11 @@
         <include name="*.xml" />
       </fileset>
     </replaceregexp>
-  	
-  	<!-- setup the shebang and variables -->
-  	<echo message="#!/bin/bash${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" />
-  	<echo message="USER=xxxx${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" append="true" />
-  	<echo message="API_KEY=xxxx${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" append="true" />
+
+    <!-- setup the shebang and variables -->
+    <echo message="#!/bin/bash${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" />
+    <echo message="USER=xxxx${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" append="true" />
+    <echo message="API_KEY=xxxx${line.separator}" file="${p2.repo.base.directory}/jfrogUpload.sh" append="true" />
 
     <!-- generate the jfrog upload script -->
     <!-- Write curl lines for every file we need to upload -->
@@ -64,7 +91,7 @@
       <srcfile />
       <arg value="-u$USER:$API_KEY"/>
       <targetfile/>
-      
+
       <fileset dir="${p2.repo.base.directory}" >
         <include name="drops/**/*.*"/>
         <include name="*.xml"/>
@@ -72,9 +99,9 @@
       </fileset>
       <globmapper from="*" to="&quot;https://mybatis.jfrog.io/artifactory/generator-eclipse-release/*&quot;" />
     </apply>
-    
+
     <!-- make it executable -->
     <chmod perm="+x" file="${p2.repo.base.directory}/jfrogUpload.sh"/>
-    
+
   </target>
 </project>
