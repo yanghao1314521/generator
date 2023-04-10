@@ -7,7 +7,7 @@
        you may not use this file except in compliance with the License.
        You may obtain a copy of the License at
 
-          http://www.apache.org/licenses/LICENSE-2.0
+          https://www.apache.org/licenses/LICENSE-2.0
 
        Unless required by applicable law or agreed to in writing, software
        distributed under the License is distributed on an "AS IS" BASIS,
@@ -343,83 +343,8 @@
         </table>
 
 
-        <table tableName="tb_crds_sys_user" domainObjectName="BaseUserInfo"/>
-        <table tableName="tb_crds_sys_role" domainObjectName="BaseRoleInfo"/>
-        <table tableName="tb_crds_sys_user_role" domainObjectName="BaseUserRoleInfo"/>
-        <table tableName="tb_crds_sys_functions" domainObjectName="BaseMenuInfo"/>
-        <table tableName="tb_crds_sys_role_func" domainObjectName="BaseRoleMenuInfo"/>
-        <table tableName="tb_crds_sys_user_resource" domainObjectName="BaseUserResourceInfo"/>
-
-        <table tableName="tb_crds_sys_config" domainObjectName="BaseSysConfig"/>
-
-
-        <table tableName="tb_crds_resource_pool" domainObjectName="BaseResourcePoolInfo">
-            <generatedKey column="poolId" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_resource_cluster" domainObjectName="BaseClusterInfo">
-            <generatedKey column="clusterid" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_resource_dbproxy" domainObjectName="BaseDbproxyInfo">
-            <generatedKey column="dbproxyId" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_resource_host" domainObjectName="BaseHostInfo"/>
-        <table tableName="tb_crds_resource_mysql" domainObjectName="BaseMysqlInfo"/>
-        <table tableName="tb_crds_resource_pgsql" domainObjectName="BasePgsqlInfo"/>
-        <!--	 -->
-        <!--
-        -->
-        <table tableName="tb_crds_resource_common" domainObjectName="BaseSoftCommonInfo"/>
-
-
-        <table tableName="tb_crds_install_main_task" domainObjectName="BaseSoftMainTask">
-            <generatedKey column="taskId" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_install_sub_task" domainObjectName="BaseSoftSubTask">
-            <generatedKey column="subtaskid" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_install_sub_task_detail" domainObjectName="BaseSoftSubTaskDetail"/>
-        <table tableName="tb_crds_install_task_config" domainObjectName="BaseSoftSubTaskConfig"/>
-        <table tableName="tb_crds_package_mirrors" domainObjectName="BaseSoftPackage"/>
-        <table tableName="tb_crds_package_system_config" domainObjectName="BaseSoftPackageConfig"/>
-        <table tableName="tb_crds_package_type" domainObjectName="BaseSoftPackageConfigType"/>
-        <table tableName="tb_crds_product" domainObjectName="BaseSoftProduct"/>
-        <table tableName="tb_crds_product_package" domainObjectName="BaseSoftProductPackage"/>
-
-        <!-- -->
-        <table tableName="tb_crds_cluster_business" domainObjectName="BaseBusinessInfo"/>
-        <table tableName="tb_crds_monitor_switchs" domainObjectName="BaseMonitorSwitchInfo"/>
-        <table tableName="tb_crds_monitor_switchs_type_time" domainObjectName="BaseMonitorSwitchType"/>
-        <table tableName="tb_crds_monitor_daily" domainObjectName="BaseMonitorDaily"/>
-        <table tableName="tb_crds_monitor_statistics" domainObjectName="BaseMonitorStatistics"/>
-
-
-        <table tableName="tb_crds_instance_config" domainObjectName="BaseInstanceConfig"/>
-
-
-        <table tableName="tb_crds_app_audit" domainObjectName="BaseAppAudit"/>
-        <table tableName="tb_crds_app_audit_log" domainObjectName="BaseAppAuditLog"/>
-        <table tableName="tb_crds_app_desc" domainObjectName="BaseAppDesc"/>
-        <table tableName="tb_crds_redis_version" domainObjectName="BaseRedisVersion"/>
-
-        <table tableName="tb_crds_resource_redis" domainObjectName="BaseRedisInfo"/>
-        <table tableName="tb_crds_app_to_user" domainObjectName="BaseRedisAppUserInfo"/>
-
-        <!--  -->
-        <table tableName="tb_crds_inspection_config" domainObjectName="BaseInspectionConfigInfo"/>
-        <table tableName="tb_crds_inspection_model" domainObjectName="BaseInspectionModelInfo">
-            <generatedKey column="model_id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_inspection_monitor" domainObjectName="BaseInspectionMonitorInfo">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_inspection_report" domainObjectName="BaseInspectionReportInfo">
-            <generatedKey column="file_id" sqlStatement="MySql" identity="true"/>
-        </table>
         <table tableName="tb_crds_inspection_source" domainObjectName="BaseInspectionSourceInfo">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="tb_crds_inspection_task" domainObjectName="BaseInspectionTaskInfo">
-            <generatedKey column="task_id" sqlStatement="MySql" identity="true"/>
         </table>
 
 
